@@ -33,6 +33,21 @@ if ($result->num_rows > 0) {
 }
 
 
+// $image = $_FILES["img"];
+// // 上傳圖片至目標資料夾
+// if ($_FILES["img"]["error"] == 0) {
+//     // move_uploaded_file({上傳文件在服務器上的臨時文件名稱}, {你希望文件移動到的位置(包含文件名稱)})
+//     if (move_uploaded_file($_FILES["img"]["activity_images"], "../test/activity_imgages" . $_FILES["img"]["activity_images"])) {
+//         echo "upload success";
+//     } else {
+//         echo "upload FAIL";
+//     }
+// }
+
+// //寫入products_images資料表
+// $filename = $_FILES["img"]["name"];
+
+
 
 ?>
 
@@ -148,7 +163,7 @@ if ($result->num_rows > 0) {
                                 <label for="eventName" class="form-label">類別</label>
                                 <select class="form-select" aria-label="Default select example" name="category">
                                     <?php foreach ($rowAc as $rows) : ?>
-                                        <option value="<?= $rows["id"] ?>" <?php if($rows["id"]==$row["category_id"]) echo "selected"?>><?= $rows["name"] ?></option>
+                                        <option value="<?= $rows["id"] ?>" <?php if ($rows["id"] == $row["category_id"]) echo "selected" ?>><?= $rows["name"] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -173,13 +188,16 @@ if ($result->num_rows > 0) {
                                 <input type="text" class="form-control" id="price" name="price" value="<?= $row["price"] ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="editEventPhoto" class="form-label">照片</label>
-                                <input type="file" class="form-control" id="img" name="img" value="<?= $row["img"] ?>">
-                                <img id="editEventPhotoPreview" src="" alt="活動照片" class="mt-3" width="100">
+                                    <label for="editEventPhoto" class="form-label">照片</label>
+                                    <input type="file" class="form-control" id="img" name="img" value="<?= $row["img"] ?> " onchange="previewImage(event)">
+
+                                    <div id="preview" width="">
+                                        <img id="editEventPhotoPreview" src="../test/activity_images/<?= $row["img"] ?>" alt="活動照片" class="mt-3" width="200px">
+                                    </div>
                             </div>
                             <button type="submit" class="btn btn-primary">保存修改</button>
-                            <a href="index.html" class="btn btn-secondary">返回</a>
                         </form>
+                        <a href="index.html" class="btn btn-secondary">返回</a>
                     <?php else : ?>
                         <h1>使用者不存在</h1>
                     <?php endif; ?>
@@ -193,5 +211,24 @@ if ($result->num_rows > 0) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 </body>
+<script>
+    // 圖片預覽函式
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function() {
+            const img = document.createElement('img');
+            img.src = reader.result;
+            preview.innerHTML = '';
+            preview.appendChild(img);
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 
 </html>
